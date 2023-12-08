@@ -26,21 +26,40 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const complainCollection = client.db("whichBook").collection("complain");
+    const usersCollection = client.db("whichBook").collection("users");
 
-    // add a complain
-    app.post("/add-complain", async (req, res) => {
-      const data = req.body;
-      const result = await complainCollection.insertOne(data);
+    // get all complains datas
+    app.get("/users", async (req, res) => {
+      const result = await usersCollection.find().toArray();
       res.status(200).json({
         success: true,
-        message: "Complain Add Successfully",
+        message: "All Users Data Retrived Successfully!",
+        data: result,
+      });
+    });
+    // get all complains datas
+    app.get("/users/admin", async (req, res) => {
+      const { email } = req.query;
+      const result = await usersCollection.findOne({ email });
+      res.status(200).json({
+        success: true,
+        message: "user get successfully",
+        data: result,
+      });
+    });
+    // get all complains datas
+    app.get("/complains", async (req, res) => {
+      const result = await complainCollection.find({ status: true }).toArray();
+      res.status(200).json({
+        success: true,
+        message: "All Complain Data Retrived Successfully!",
         data: result,
       });
     });
 
     // get all complains datas
-    app.get("/complains", async (req, res) => {
-      const result = await complainCollection.find({}).toArray();
+    app.get("/complains/action", async (req, res) => {
+      const result = await complainCollection.find({ status: false }).toArray();
       res.status(200).json({
         success: true,
         message: "All Complain Data Retrived Successfully!",
@@ -61,6 +80,32 @@ async function run() {
       });
     });
 
+    //complain is updated
+    app.patch("/complains/:id", async (req, res) => {
+      const { id } = req.params;
+      const data = req.body;
+      const filters = { _id: new ObjectId(id) };
+      const updated = {
+        $set: {
+          status: false,
+          action: data.action,
+        },
+      };
+      const options = { upsert: true };
+
+      const result = await complainCollection.updateOne(
+        filters,
+        updated,
+        options
+      );
+
+      res.status(200).json({
+        success: true,
+        message: "Citizen Complain on Action is Start",
+        data: result,
+      });
+    });
+
     // delete complain data
     app.delete("/complains/:id", async (req, res) => {
       const { id } = req.params;
@@ -69,6 +114,27 @@ async function run() {
       res.status(200).json({
         success: true,
         message: "Complain Data Deleted Successfully!",
+        data: result,
+      });
+    });
+    // add a complain
+    app.post("/add-complain", async (req, res) => {
+      const data = req.body;
+      console.log(data);
+      const result = await complainCollection.insertOne(data);
+      res.status(200).json({
+        success: true,
+        message: "Complain Add Successfully",
+        data: result,
+      });
+    });
+
+    app.post("/add-user", async (req, res) => {
+      const data = req.body;
+      const result = await usersCollection.insertOne(data);
+      res.status(200).json({
+        success: true,
+        message: "Users Add Successfully",
         data: result,
       });
     });

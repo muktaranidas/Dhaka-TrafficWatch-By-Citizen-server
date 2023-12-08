@@ -1,15 +1,14 @@
 {
-  "name": "b612-used-products-resale-server-side",
+  "name": "dhaka-traffic-watch-by-citizen",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "start-dev": "nodemon index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Mukta rani das",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

@@ -120,7 +120,6 @@ async function run() {
     // add a complain
     app.post("/add-complain", async (req, res) => {
       const data = req.body;
-      console.log(data);
       const result = await complainCollection.insertOne(data);
       res.status(200).json({
         success: true,
